@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, PatientForm, DoctorForm, PatientProfileForm, DoctorProfileForm
 from .models import Patient, Doctor
 from django.contrib.auth.forms import UserCreationForm  # For now, we'll customize later
+from django.shortcuts import render, redirect, get_object_or_404
 
 def signup(request):
     if request.method == 'POST':
@@ -77,3 +77,38 @@ def doctor_profile(request):
     else:
         form = DoctorProfileForm(instance=doctor)
     return render(request, 'dms/doctor_profile.html', {'form': form})
+
+@login_required
+def profile(request):
+    if hasattr(request.user, 'patient'):
+        return redirect('patient_profile')
+    elif hasattr(request.user, 'doctor'):
+        return redirect('doctor_profile')
+    else:
+        return render(request, 'dms_app/select_profile.html') 
+
+@login_required
+def patient_profile(request):
+    patient = request.user.patient
+    if request.method == 'POST':
+        form = PatientProfileForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            return redirect('patient_profile')  # Redirect to the profile page
+    else:
+        form = PatientProfileForm(instance=patient)
+    return render(request, 'dms_app/patient_profile.html', {'form': form})
+
+@login_required
+def doctor_profile(request):
+    doctor = request.user.doctor
+    if request.method == 'POST':
+        form = DoctorProfileForm(request.POST, instance=doctor)
+        if form.is_valid():
+            form.save()
+            return redirect('doctor_profile') 
+    else:
+        form = DoctorProfileForm(instance=doctor)
+    return render(request, 'dms_app/doctor_profile.html', {'form': form})
+
+
