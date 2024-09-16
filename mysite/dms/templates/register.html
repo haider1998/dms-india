@@ -1,0 +1,39 @@
+<h2>Register</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ user_form.as_p }}
+  <div id="patient-form" style="display:none;">
+    {{ patient_form.as_p }}
+  </div>
+  <div id="doctor-form" style="display:none;">
+    {{ doctor_form.as_p }}
+  </div>
+  <button type="submit">Register</button>
+</form>
+
+<script>
+  const isPatientCheckbox = document.getElementById('id_is_patient');
+  const isDoctorCheckbox = document.getElementById('id_is_doctor');
+  const patientForm = document.getElementById('patient-form');
+  const doctorForm = document.getElementById('doctor-form');
+
+  isPatientCheckbox.addEventListener('change', () => {
+    if (isPatientCheckbox.checked) {
+      patientForm.style.display = 'block';
+      doctorForm.style.display = 'none';
+      isDoctorCheckbox.checked = false; 
+    } else {
+      patientForm.style.display = 'none';
+    }
+  });
+
+  isDoctorCheckbox.addEventListener('change', () => {
+    if (isDoctorCheckbox.checked) {
+      doctorForm.style.display = 'block';
+      patientForm.style.display = 'none';
+      isPatientCheckbox.checked = false; 
+    } else {
+      doctorForm.style.display = 'none';
+    }
+  });
+</script>

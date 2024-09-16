@@ -11,12 +11,29 @@ class User(AbstractUser):
     is_patient = models.BooleanField(default=False)
     mobile_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
 
+    groups = models.ManyToManyField(
+           'auth.Group',
+           related_name='dms_user_set',
+           related_query_name='dms_user',  # Add related_name here
+           blank=True,
+           help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+           verbose_name='groups',
+       )
+    user_permissions = models.ManyToManyField(
+           'auth.Permission',
+           related_name='dms_user_set',  # Add related_name here
+           blank=True,
+           help_text='Specific permissions for this user.',
+           verbose_name='user permissions',
+       )
+
     def __str__(self):
         return self.username  # Or use email if that's your preference
 
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     date_of_birth = models.DateField(null=True, blank=True)
+    mobile_number = models.CharField(max_length=20)
     gender = models.CharField(max_length=10, null=True, blank=True)  # Choices can be added later
     address = models.TextField(null=True, blank=True)
 
