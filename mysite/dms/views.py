@@ -3,6 +3,19 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, PatientForm, DoctorForm, PatientProfileForm, DoctorProfileForm
 from .models import Patient, Doctor
+from django.contrib.auth.forms import UserCreationForm  # For now, we'll customize later
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log in the user after registration
+            return redirect('home')  # Replace 'home' with your desired redirect URL
+    else:
+        form = UserCreationForm()
+    return render(request, 'dms_app/signup.html', {'form': form})
+
 
 def register(request):
     if request.method == 'POST':
